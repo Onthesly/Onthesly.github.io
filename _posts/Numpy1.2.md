@@ -1,0 +1,160 @@
+# numpy를 사용한 데이터 분석 맛보기
+
+## dataset 파일 읽어오기
+
+
+```python
+import numpy as np
+```
+
+
+```python
+data = np.loadtxt('data/movielens-1m/ratings.dat', delimiter='::', dtype=np.int64)
+```
+
+
+```python
+data[:5,:]
+```
+
+
+
+
+    array([[        1,      1193,         5, 978300760],
+           [        1,       661,         3, 978302109],
+           [        1,       914,         3, 978301968],
+           [        1,      3408,         4, 978300275],
+           [        1,      2355,         5, 978824291]], dtype=int64)
+
+
+
+
+```python
+data.shape
+```
+
+
+
+
+    (1000209, 4)
+
+
+
+## 전체 평점의 평균을 계산
+
+
+```python
+mean_rating_total = data[:, 2].mean()
+mean_rating_total
+```
+
+
+
+
+    3.581564453029317
+
+
+
+## 각 사용자별 평균 평점을 계산
+
+
+```python
+user_ids = np.unique(data[:, 0])
+user_ids
+```
+
+
+
+
+    array([   1,    2,    3, ..., 6038, 6039, 6040], dtype=int64)
+
+
+
+
+```python
+user_ids[:5]
+```
+
+
+
+
+    array([1, 2, 3, 4, 5], dtype=int64)
+
+
+
+
+```python
+user_ids.shape
+```
+
+
+
+
+    (6040,)
+
+
+
+
+```python
+mean_rating_by_user_list = []
+for user_id in user_ids:
+    data_for_user = data[data[:,0] == user_id, :]
+    mean_rating_for_user = data_for_user[:, 2].mean()
+    mean_rating_by_user_list.append([user_id, mean_rating_for_user])
+```
+
+
+```python
+mean_rating_by_user_list[:5]
+```
+
+
+
+
+    [[1, 4.188679245283019],
+     [2, 3.7131782945736433],
+     [3, 3.9019607843137254],
+     [4, 4.190476190476191],
+     [5, 3.1464646464646466]]
+
+
+
+
+```python
+mean_rating_by_user_array = np.array(mean_rating_by_user_list, dtype=np.float32)
+```
+
+
+```python
+mean_rating_by_user_array[:5,:]
+```
+
+
+
+
+    array([[1.       , 4.188679 ],
+           [2.       , 3.7131784],
+           [3.       , 3.9019608],
+           [4.       , 4.1904764],
+           [5.       , 3.1464646]], dtype=float32)
+
+
+
+
+```python
+mean_rating_by_user_array.shape
+```
+
+
+
+
+    (6040, 2)
+
+
+
+## data파일로 쓰기(내보내기)
+
+
+```python
+np.savetxt('mean_rating_by_user.csv', mean_rating_by_user_array, fmt='%.3f', delimiter=',')
+```
